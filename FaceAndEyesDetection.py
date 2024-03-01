@@ -8,8 +8,13 @@ face_model_path = "res10_300x300_ssd_iter_140000_fp16.caffemodel"
 face_prototxt_path = "deploy.prototxt.txt"
 face_net = cv2.dnn.readNetFromCaffe(face_prototxt_path, face_model_path)
 
-# Load Haar Cascade classifier for eye detection
-eye_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_eye.xml')
+# Load Haar Cascade classifiers for eye detection
+left_eye_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_lefteye_2splits.xml')
+right_eye_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_righteye_2splits.xml')
+
+# Load pre-trained iris detection model
+iris_model_path = "iris_landmark.tflite"
+iris_net = cv2.dnn.readNet(iris_model_path)
 
 cap = cv2.VideoCapture(0)
 
@@ -40,10 +45,27 @@ while True:
             face_roi = frame[y:y2, x:x2]
             gray_face = cv2.cvtColor(face_roi, cv2.COLOR_BGR2GRAY)
 
-            # Perform eye detection using Haar Cascade
-            eyes = eye_cascade.detectMultiScale(gray_face)
-            for (ex, ey, ew, eh) in eyes:
+            # Perform eye detection using Haar Cascade for left eye
+            left_eyes = left_eye_cascade.detectMultiScale(gray_face)
+            for (ex, ey, ew, eh) in left_eyes:
                 cv2.rectangle(face_roi, (ex, ey), (ex + ew, ey + eh), (255, 0, 0), 2)
+
+                # Extract left eye region
+                left_eye_roi = face_roi[ey:ey + eh, ex:ex + ew]
+
+                # Pass left eye region through iris detection model
+                # Perform iris detection and draw rectangles around detected iris
+
+            # Perform eye detection using Haar Cascade for right eye
+            right_eyes = right_eye_cascade.detectMultiScale(gray_face)
+            for (ex, ey, ew, eh) in right_eyes:
+                cv2.rectangle(face_roi, (ex, ey), (ex + ew, ey + eh), (0, 0, 255), 2)
+
+                # Extract right eye region
+                right_eye_roi = face_roi[ey:ey + eh, ex:ex + ew]
+
+                # Pass right eye region through iris detection model
+                # Perform iris detection and draw rectangles around detected iris
 
     cv2.imshow("Face and Eyes", frame)
 
