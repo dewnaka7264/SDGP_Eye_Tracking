@@ -1,0 +1,29 @@
+# Identify this repository as a Python project
+*.py linguist-language=Python
+
+# Treat Python files as text
+*.py text
+
+# Treat model files as binary
+*.caffemodel binary
+*.prototxt text
+*.tflite binary
+
+# Treat image files as binary
+*.jpg binary
+*.png binary
+*.bmp binary
+
+# Handle video files as binary
+*.mp4 binary
+*.avi binary
+
+# Treat markdown and text files as text
+*.md text
+*.txt text
+
+# Treat CSV files as text
+*.csv text
+
+# Handle all other files as text
+* text=auto
